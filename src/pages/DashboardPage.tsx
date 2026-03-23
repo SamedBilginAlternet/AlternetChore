@@ -1,7 +1,11 @@
     // Bugün için test bildirimi gönder
     const sendTestNotification = async () => {
         try {
-            const res = await fetch('https://<SUPABASE_PROJECT_ID>.functions.supabase.co/telegram-bot', {
+            // Project ID'yi .env'den otomatik al
+            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+            const projectId = supabaseUrl?.split('//')[1]?.split('.')[0];
+            const functionUrl = `https://${projectId}.functions.supabase.co/telegram-bot`;
+            const res = await fetch(functionUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'test' })

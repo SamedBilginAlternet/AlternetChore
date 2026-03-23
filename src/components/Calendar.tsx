@@ -246,61 +246,95 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                     </button>
                                 )}
                                 {selectedDay === dateStr && isAdmin && onAssign && !holiday && (
-                                    <motion.div
-                                        className="assign-dropdown"
-                                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                                        onClick={(e) => e.stopPropagation()}
-                                        style={{
-                                            zIndex: 10,
-                                            background: 'white',
-                                            border: '1px solid #eee',
-                                            borderRadius: 8,
-                                            padding: 12,
-                                            boxShadow: '0 2px 8px #0001',
-                                            position: 'absolute',
-                                            maxHeight: 320,
-                                            overflowY: 'auto',
-                                            minWidth: 220
-                                        }}
-                                    >
-                                        <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
-                                            <span style={{ fontWeight: 600 }}>Atama Tipi:</span>
-                                            <button
-                                                className="assign-type-btn"
-                                                style={{ background: assignType === 'chore' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'chore' ? 700 : 400 }}
-                                                onClick={(e) => { e.stopPropagation(); setAssignType('chore'); }}
-                                            >
-                                                🧹 Temizlik
-                                            </button>
-                                            <button
-                                                className="assign-type-btn"
-                                                style={{ background: assignType === 'vileda' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'vileda' ? 700 : 400 }}
-                                                onClick={(e) => { e.stopPropagation(); setAssignType('vileda'); }}
-                                            >
-                                                🧽 Vileda
-                                            </button>
-                                        </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                            {members.map((m) => (
+                                    <>
+                                        {/* Modal Overlay */}
+                                        <div
+                                            className="assign-modal-overlay"
+                                            style={{
+                                                position: 'fixed',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100vw',
+                                                height: '100vh',
+                                                background: 'rgba(0,0,0,0.25)',
+                                                zIndex: 1000
+                                            }}
+                                            onClick={() => setSelectedDay(null)}
+                                        />
+                                        {/* Modal Content */}
+                                        <motion.div
+                                            className="assign-modal"
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.95 }}
+                                            style={{
+                                                position: 'fixed',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                zIndex: 1001,
+                                                background: 'white',
+                                                border: '1px solid #eee',
+                                                borderRadius: 12,
+                                                padding: 24,
+                                                boxShadow: '0 4px 32px #0002',
+                                                minWidth: 260,
+                                                maxWidth: 340,
+                                                maxHeight: 400,
+                                                overflowY: 'auto',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 8
+                                            }}
+                                            onClick={e => e.stopPropagation()}
+                                        >
+                                            <div style={{ display: 'flex', gap: 8, marginBottom: 14, alignItems: 'center', justifyContent: 'space-between' }}>
+                                                <span style={{ fontWeight: 700, fontSize: 18 }}>Atama Yap</span>
                                                 <button
-                                                    key={m.id}
-                                                    className="assign-option"
-                                                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', border: '1px solid #eee', borderRadius: 4, background: '#fafafa', cursor: 'pointer' }}
-                                                    onClick={async () => {
-                                                        if (onAssign) {
-                                                            await onAssign(dateStr, m.id, assignType);
-                                                            setSelectedDay(null);
-                                                        }
-                                                    }}
+                                                    style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#888', marginLeft: 8 }}
+                                                    onClick={() => setSelectedDay(null)}
+                                                    title="Kapat"
                                                 >
-                                                    <MemberAvatar name={m.name} color={m.color} size={20} />
-                                                    <span>{m.name}</span>
+                                                    ×
                                                 </button>
-                                            ))}
-                                        </div>
-                                    </motion.div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
+                                                <span style={{ fontWeight: 600 }}>Atama Tipi:</span>
+                                                <button
+                                                    className="assign-type-btn"
+                                                    style={{ background: assignType === 'chore' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'chore' ? 700 : 400 }}
+                                                    onClick={(e) => { e.stopPropagation(); setAssignType('chore'); }}
+                                                >
+                                                    🧹 Temizlik
+                                                </button>
+                                                <button
+                                                    className="assign-type-btn"
+                                                    style={{ background: assignType === 'vileda' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'vileda' ? 700 : 400 }}
+                                                    onClick={(e) => { e.stopPropagation(); setAssignType('vileda'); }}
+                                                >
+                                                    🧽 Vileda
+                                                </button>
+                                            </div>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                {members.map((m) => (
+                                                    <button
+                                                        key={m.id}
+                                                        className="assign-option"
+                                                        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', border: '1px solid #eee', borderRadius: 4, background: '#fafafa', cursor: 'pointer', fontSize: 16 }}
+                                                        onClick={async () => {
+                                                            if (onAssign) {
+                                                                await onAssign(dateStr, m.id, assignType);
+                                                                setSelectedDay(null);
+                                                            }
+                                                        }}
+                                                    >
+                                                        <MemberAvatar name={m.name} color={m.color} size={22} />
+                                                        <span>{m.name}</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    </>
                                 )}
                             {/* assignType state declaration was mistakenly here, removed. */}
                             </motion.div>
