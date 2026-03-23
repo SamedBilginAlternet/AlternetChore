@@ -1,3 +1,20 @@
+    // Bugün için test bildirimi gönder
+    const sendTestNotification = async () => {
+        try {
+            const res = await fetch('https://<SUPABASE_PROJECT_ID>.functions.supabase.co/telegram-bot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'test' })
+            });
+            if (res.ok) {
+                alert('Test bildirimi gönderildi!');
+            } else {
+                alert('Test bildirimi gönderilemedi.');
+            }
+        } catch (err) {
+            alert('Test bildirimi gönderilemedi.');
+        }
+    };
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { format, endOfMonth } from 'date-fns';
@@ -79,12 +96,13 @@ export default function DashboardPage() {
         fetchData();
     }, [fetchData]);
 
-    const handleAssign = async (date: string, memberId: number) => {
+    // type parametresi eklendi: 'chore' veya 'vileda'
+    const handleAssign = async (date: string, memberId: number, type: 'chore' | 'vileda') => {
         try {
             const { error } = await supabase.from('assignments').upsert({
                 date,
                 member_id: memberId,
-                type: 'chore',
+                type,
                 created_by: 'manual'
             }, { onConflict: 'date,type' });
 
@@ -147,6 +165,11 @@ export default function DashboardPage() {
                     onToggleHoliday={isAdmin ? handleToggleHoliday : undefined}
                     onMonthChange={setCurrentMonth}
                 />
+                {isAdmin && (
+                    <button style={{marginTop: 16, padding: '8px 16px', background: '#10B981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer'}} onClick={sendTestNotification}>
+                        Bugün için test bildirimi gönder
+                    </button>
+                )}
             </div>
 
             <aside className="dashboard-sidebar">

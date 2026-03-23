@@ -22,10 +22,10 @@ interface CalendarProps {
     assignments: Assignment[];
     members: Member[];
     holidays: Holiday[];
-    onAssign?: (date: string, memberId: number) => void;
+    onAssign?: (date: string, memberId: number, type: 'chore' | 'vileda') => void;
     onUnassign?: (date: string, type: string) => void;
     onToggleHoliday?: (date: string) => void;
-    onMonthChange?: (newMonth: string) => void; // New prop
+    onMonthChange?: (newMonth: string) => void;
 }
 
 const weekDays = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
@@ -251,12 +251,29 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
+                                        <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                                            <span style={{ fontWeight: 600 }}>Atama Tipi:</span>
+                                            <button
+                                                className="assign-type-btn"
+                                                style={{ background: '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer' }}
+                                                onClick={(e) => { e.stopPropagation(); setAssignType('chore'); }}
+                                            >
+                                                🧹 Temizlik
+                                            </button>
+                                            <button
+                                                className="assign-type-btn"
+                                                style={{ background: '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer' }}
+                                                onClick={(e) => { e.stopPropagation(); setAssignType('vileda'); }}
+                                            >
+                                                🧽 Vileda
+                                            </button>
+                                        </div>
                                         {members.map((m) => (
                                             <button
                                                 key={m.id}
                                                 className="assign-option"
                                                 onClick={() => {
-                                                    onAssign(dateStr, m.id);
+                                                    onAssign(dateStr, m.id, assignType);
                                                     setSelectedDay(null);
                                                 }}
                                             >
@@ -266,6 +283,8 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                         ))}
                                     </motion.div>
                                 )}
+                            // assignType state'i ekle
+                                const [assignType, setAssignType] = useState<'chore' | 'vileda'>('chore');
                             </motion.div>
                         );
                     })}
