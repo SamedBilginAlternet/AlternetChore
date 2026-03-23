@@ -251,7 +251,18 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                                         onClick={(e) => e.stopPropagation()}
-                                        style={{ zIndex: 10, background: 'white', border: '1px solid #eee', borderRadius: 8, padding: 12, boxShadow: '0 2px 8px #0001', position: 'absolute' }}
+                                        style={{
+                                            zIndex: 10,
+                                            background: 'white',
+                                            border: '1px solid #eee',
+                                            borderRadius: 8,
+                                            padding: 12,
+                                            boxShadow: '0 2px 8px #0001',
+                                            position: 'absolute',
+                                            maxHeight: 320,
+                                            overflowY: 'auto',
+                                            minWidth: 220
+                                        }}
                                     >
                                         <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
                                             <span style={{ fontWeight: 600 }}>Atama Tipi:</span>
