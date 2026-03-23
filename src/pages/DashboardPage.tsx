@@ -97,6 +97,7 @@ export default function DashboardPage() {
     }, [fetchData]);
 
     // type parametresi eklendi: 'chore' veya 'vileda'
+    // Artık promise döndürüyor, Calendar'da await edilecek
     const handleAssign = async (date: string, memberId: number, type: 'chore' | 'vileda') => {
         try {
             const { error } = await supabase.from('assignments').upsert({
@@ -107,7 +108,7 @@ export default function DashboardPage() {
             }, { onConflict: 'date,type' });
 
             if (error) throw error;
-            fetchData();
+            await fetchData();
         } catch (err) {
             console.error('Atama hatası:', err);
         }

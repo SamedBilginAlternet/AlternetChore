@@ -49,6 +49,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [direction, setDirection] = useState(0);
     const [selectedDay, setSelectedDay] = useState<string | null>(null);
+    const [assignType, setAssignType] = useState<'chore' | 'vileda'>('chore');
     const { isAdmin } = useAuth();
 
     const goNext = useCallback(() => {
@@ -250,41 +251,46 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
                                         onClick={(e) => e.stopPropagation()}
+                                        style={{ zIndex: 10, background: 'white', border: '1px solid #eee', borderRadius: 8, padding: 12, boxShadow: '0 2px 8px #0001', position: 'absolute' }}
                                     >
-                                        <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+                                        <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
                                             <span style={{ fontWeight: 600 }}>Atama Tipi:</span>
                                             <button
                                                 className="assign-type-btn"
-                                                style={{ background: '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer' }}
+                                                style={{ background: assignType === 'chore' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'chore' ? 700 : 400 }}
                                                 onClick={(e) => { e.stopPropagation(); setAssignType('chore'); }}
                                             >
                                                 🧹 Temizlik
                                             </button>
                                             <button
                                                 className="assign-type-btn"
-                                                style={{ background: '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer' }}
+                                                style={{ background: assignType === 'vileda' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'vileda' ? 700 : 400 }}
                                                 onClick={(e) => { e.stopPropagation(); setAssignType('vileda'); }}
                                             >
                                                 🧽 Vileda
                                             </button>
                                         </div>
-                                        {members.map((m) => (
-                                            <button
-                                                key={m.id}
-                                                className="assign-option"
-                                                onClick={() => {
-                                                    onAssign(dateStr, m.id, assignType);
-                                                    setSelectedDay(null);
-                                                }}
-                                            >
-                                                <MemberAvatar name={m.name} color={m.color} size={20} />
-                                                <span>{m.name}</span>
-                                            </button>
-                                        ))}
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                            {members.map((m) => (
+                                                <button
+                                                    key={m.id}
+                                                    className="assign-option"
+                                                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px', border: '1px solid #eee', borderRadius: 4, background: '#fafafa', cursor: 'pointer' }}
+                                                    onClick={async () => {
+                                                        if (onAssign) {
+                                                            await onAssign(dateStr, m.id, assignType);
+                                                            setSelectedDay(null);
+                                                        }
+                                                    }}
+                                                >
+                                                    <MemberAvatar name={m.name} color={m.color} size={20} />
+                                                    <span>{m.name}</span>
+                                                </button>
+                                            ))}
+                                        </div>
                                     </motion.div>
                                 )}
-                            // assignType state'i ekle
-                                const [assignType, setAssignType] = useState<'chore' | 'vileda'>('chore');
+                            {/* assignType state declaration was mistakenly here, removed. */}
                             </motion.div>
                         );
                     })}
