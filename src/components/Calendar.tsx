@@ -162,9 +162,10 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                         const viledaAssignment = viledaMap.get(dateStr);
                         const isToday = isSameDay(day, today);
                         const isCurrentMonth = isSameMonth(day, currentMonth);
+
                         const isWe = isWeekend(day);
                         const dbHoliday = holidayMap.get(dateStr);
-                        const holiday = dbHoliday || isWe;
+                        const holiday = !!dbHoliday;
 
                         let className = 'calendar-day';
                         if (isToday) className += ' today';
