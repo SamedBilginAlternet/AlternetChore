@@ -49,6 +49,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
     const [direction, setDirection] = useState(0);
     const [selectedDay, setSelectedDay] = useState<string | null>(null);
     const [assignType, setAssignType] = useState<'chore' | 'vileda'>('chore');
+    const [deletionSelectDate, setDeletionSelectDate] = useState<string | null>(null);
     const { isAdmin } = useAuth();
 
     const goNext = useCallback(() => {
@@ -230,15 +231,21 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                         {holiday ? '✖' : '🏖️'}
                                     </button>
                                 )}
-                                {/* Admin: unassign from this day */}
+                                {/* Admin: unassign buttons */}
                                 {isAdmin && (chore || viledaAssignment) && isCurrentMonth && !isSunday && !holiday && onUnassign && (
                                     <button
                                         className="calendar-unassign-btn"
-                                        title="Atamayı kaldır"
+                                        title="Atamasını kaldır"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            const type = (chore && viledaAssignment) ? 'all' : (chore ? 'chore' : 'vileda');
-                                            onUnassign(dateStr, type);
+                                            setDeletionSelectDate(dateStr);
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '4px',
+                                            right: '20px',
+                                            padding: '2px 5px',
+                                            fontSize: '12px',
                                         }}
                                     >
                                         ✖
@@ -340,6 +347,120 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                         );
                     })}
                 </motion.div>
+            </AnimatePresence>
+
+            {/* Deletion Type Selection Modal */}
+            <AnimatePresence>
+                {deletionSelectDate && (
+                    <>
+                        <div
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                width: '100vw',
+                                height: '100vh',
+                                background: 'rgba(0,0,0,0.25)',
+                                zIndex: 2000
+                            }}
+                            onClick={() => setDeletionSelectDate(null)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            style={{
+                                position: 'fixed',
+                                top: '50%',
+                                left: '50%',
+                                transform: 'translate(-50%, -50%)',
+                                zIndex: 2001,
+                                background: 'white',
+                                border: '1px solid #eee',
+                                borderRadius: 12,
+                                padding: 24,
+                                boxShadow: '0 4px 32px #0002',
+                                minWidth: 280,
+                                textAlign: 'center'
+                            }}
+                        >
+                            <h3 style={{ margin: '0 0 24px 0', color: '#1f2937' }}>
+                                Hangi atamasını silmek istersiniz?
+                            </h3>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                {/* Get the current chore and vileda for this date */}
+                                {(() => {
+                                    const choreAssignment = choreMap.get(deletionSelectDate);
+                                    const viledaAssignment = viledaMap.get(deletionSelectDate);
+                                    return (
+                                        <>
+                                            {choreAssignment && (
+                                                <button
+                                                    onClick={() => {
+                                                        if (onUnassign) {
+                                                            onUnassign(deletionSelectDate, 'chore');
+                                                        }
+                                                        setDeletionSelectDate(null);
+                                                    }}
+                                                    style={{
+                                                        padding: '12px 16px',
+                                                        border: '1px solid #e5e7eb',
+                                                        borderRadius: 6,
+                                                        background: '#fafafa',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 500,
+                                                        color: '#374151',
+                                                        fontSize: 14
+                                                    }}
+                                                >
+                                                    🧹 Temizlik Atamasını Sil
+                                                </button>
+                                            )}
+                                            {viledaAssignment && (
+                                                <button
+                                                    onClick={() => {
+                                                        if (onUnassign) {
+                                                            onUnassign(deletionSelectDate, 'vileda');
+                                                        }
+                                                        setDeletionSelectDate(null);
+                                                    }}
+                                                    style={{
+                                                        padding: '12px 16px',
+                                                        border: '1px solid #e5e7eb',
+                                                        borderRadius: 6,
+                                                        background: '#fafafa',
+                                                        cursor: 'pointer',
+                                                        fontWeight: 500,
+                                                        color: '#374151',
+                                                        fontSize: 14
+                                                    }}
+                                                >
+                                                    🧽 Vileda Atamasını Sil
+                                                </button>
+                                            )}
+                                        </>
+                                    );
+                                })()}
+                                <button
+                                    onClick={() => setDeletionSelectDate(null)}
+                                    style={{
+                                        padding: '12px 16px',
+                                        border: '1px solid #d1d5db',
+                                        borderRadius: 6,
+                                        background: '#f9fafb',
+                                        cursor: 'pointer',
+                                        fontWeight: 500,
+                                        color: '#374151',
+                                        fontSize: 14,
+                                        marginTop: 8
+                                    }}
+                                >
+                                    İptal
+                                </button>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
             </AnimatePresence>
         </div>
     );
