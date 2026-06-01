@@ -9,7 +9,6 @@ import {
     eachDayOfInterval,
     isSameMonth,
     isSameDay,
-    isWeekend,
     addMonths,
     subMonths,
 } from 'date-fns';
@@ -163,17 +162,17 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                         const isToday = isSameDay(day, today);
                         const isCurrentMonth = isSameMonth(day, currentMonth);
 
-                        const isWe = isWeekend(day);
+                        const isSunday = day.getDay() === 0;
                         const dbHoliday = holidayMap.get(dateStr);
                         const holiday = !!dbHoliday;
 
                         let className = 'calendar-day';
                         if (isToday) className += ' today';
-                        if (isWe) className += ' weekend';
+                        if (isSunday) className += ' weekend';
                         if (!isCurrentMonth) className += ' other-month';
                         if (isAdmin && onAssign) className += ' admin-mode';
                         if (holiday && isCurrentMonth) className += ' holiday';
-                        if (viledaAssignment && isCurrentMonth && !isWe && !dbHoliday) className += ' vileda-day';
+                        if (viledaAssignment && isCurrentMonth && !isSunday && !dbHoliday) className += ' vileda-day';
 
                         return (
                             <motion.div
@@ -184,7 +183,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                 transition={{ delay: i * 0.008, duration: 0.15 }}
                                 onClick={() => handleDayClick(dateStr)}
                                 style={
-                                    chore && isCurrentMonth && !isWe
+                                    chore && isCurrentMonth && !isSunday
                                         ? { backgroundColor: `${chore.color}10` }
                                         : undefined
                                 }
@@ -194,7 +193,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                     {holiday && isCurrentMonth && (
                                         <span className="calendar-holiday-dot" title={dbHoliday?.name || 'Tatil'}>🔴</span>
                                     )}
-                                    {viledaAssignment && isCurrentMonth && !isWe && !dbHoliday && (
+                                    {viledaAssignment && isCurrentMonth && !isSunday && !dbHoliday && (
                                         <span className="calendar-vileda-dot" title={`Vileda: ${viledaAssignment.name}`}>🧽</span>
                                     )}
                                 </div>
@@ -202,7 +201,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                     <span className="calendar-holiday-label">Tatil</span>
                                 ) : (
                                     <>
-                                        {chore && isCurrentMonth && !isWe && (
+                                        {chore && isCurrentMonth && !isSunday && (
                                             <>
                                                 <MemberAvatar name={chore.name} color={chore.color} size={20} className="calendar-day-avatar" />
                                                 <span
@@ -213,7 +212,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                                 </span>
                                             </>
                                         )}
-                                        {viledaAssignment && isCurrentMonth && !isWe && (
+                                        {viledaAssignment && isCurrentMonth && !isSunday && (
                                             <span className="calendar-vileda-label">
                                                 Vileda: {viledaAssignment.name}
                                             </span>
@@ -222,7 +221,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                 )}
 
                                 {/* Admin: toggle holiday or assign */}
-                                {isAdmin && isCurrentMonth && !isWe && onToggleHoliday && (
+                                {isAdmin && isCurrentMonth && !isSunday && onToggleHoliday && (
                                     <button
                                         className="calendar-holiday-toggle"
                                         title={holiday ? 'Tatili kaldır' : 'Tatil yap'}
@@ -232,7 +231,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                     </button>
                                 )}
                                 {/* Admin: unassign from this day */}
-                                {isAdmin && (chore || viledaAssignment) && isCurrentMonth && !isWe && !holiday && onUnassign && (
+                                {isAdmin && (chore || viledaAssignment) && isCurrentMonth && !isSunday && !holiday && onUnassign && (
                                     <button
                                         className="calendar-unassign-btn"
                                         title="Atamayı kaldır"

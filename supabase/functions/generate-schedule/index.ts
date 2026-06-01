@@ -51,14 +51,14 @@ serve(async (req: Request) => {
             .like('date', `${month}%`);
         const holidaySet = new Set(holidays?.map((h: any) => h.date));
 
-        // 3. Generate weekdays
+        // 3. Generate weekdays (excluding only Sundays and holidays)
         const daysInMonth = new Date(year, mon, 0).getDate();
         const weekdays: string[] = [];
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(year, mon - 1, day);
             const dayOfWeek = date.getDay();
             const dateStr = `${year}-${String(mon).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            if (dayOfWeek !== 0 && dayOfWeek !== 6 && !holidaySet.has(dateStr)) {
+            if (dayOfWeek !== 0 && !holidaySet.has(dateStr)) {
                 weekdays.push(dateStr);
             }
         }
