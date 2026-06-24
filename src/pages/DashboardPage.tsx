@@ -171,7 +171,7 @@ export default function DashboardPage() {
                     onMonthChange={setCurrentMonth}
                 />
                 {isAdmin && (
-                    <button style={{marginTop: 16, padding: '8px 16px', background: '#10B981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer'}} onClick={sendTestNotification}>
+                    <button className="no-print" style={{marginTop: 16, padding: '8px 16px', background: '#10B981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer'}} onClick={sendTestNotification}>
                         Bugün için test bildirimi gönder
                     </button>
                 )}

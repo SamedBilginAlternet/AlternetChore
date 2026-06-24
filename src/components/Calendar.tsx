@@ -68,6 +68,10 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
         if (onMonthChange) onMonthChange(format(prevMonth, 'yyyy-MM'));
     }, [currentMonth, onMonthChange]);
 
+    const handlePrint = useCallback(() => {
+        window.print();
+    }, []);
+
     const handleDragEnd = useCallback(
         (_: any, info: PanInfo) => {
             const threshold = 50;
@@ -111,6 +115,11 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
 
     return (
         <div className="card calendar-container">
+            <div className="calendar-toolbar no-print">
+                <button className="calendar-print-btn" onClick={handlePrint} title="Takvimi yazdır">
+                    🖨️ Yazdır
+                </button>
+            </div>
             <div className="calendar-header">
                 <button className="calendar-nav-btn" onClick={goPrev} aria-label="Önceki ay">
                     ‹

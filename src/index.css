@@ -1519,3 +1519,82 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.5);
 }
+
+/* Calendar print toolbar */
+.calendar-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.calendar-print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.calendar-print-btn:hover {
+  background: #e5e7eb;
+}
+
+/* Print: show only a clean month grid */
+@media print {
+  @page {
+    size: landscape;
+    margin: 12mm;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  /* Force background / member colors to render in print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide everything that isn't the calendar */
+  .navbar,
+  .dashboard-sidebar,
+  .no-print,
+  .calendar-nav-btn,
+  .calendar-holiday-toggle,
+  .calendar-unassign-btn,
+  .assign-modal,
+  .assign-modal-overlay {
+    display: none !important;
+  }
+
+  /* Let the calendar fill the page */
+  .dashboard-container {
+    display: block !important;
+  }
+
+  .dashboard-main-content {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  .calendar-container {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Keep day cells whole across page breaks */
+  .calendar-day {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
