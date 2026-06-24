@@ -359,39 +359,49 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                 </motion.div>
             </AnimatePresence>
 
-            {/* Print-only view: clean month table (screen-hidden, shown on print) */}
+            {/* Print-only view: clean month calendar grid (screen-hidden, shown on print) */}
             <div className="calendar-print-view">
                 <h2 className="calendar-print-title">
                     {format(currentMonth, 'MMMM yyyy', { locale: tr })} — Görev Takvimi
                 </h2>
-                <table className="calendar-print-table">
-                    <thead>
-                        <tr>
-                            <th>Tarih</th>
-                            <th>Gün</th>
-                            <th>Temizlik</th>
-                            <th>Vileda</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {eachDayOfInterval({ start: monthStart, end: monthEnd }).map((day) => {
-                            const dateStr = format(day, 'yyyy-MM-dd');
-                            const isSunday = day.getDay() === 0;
-                            const dbHoliday = holidayMap.get(dateStr);
-                            const chore = choreMap.get(dateStr);
-                            const viledaAssignment = viledaMap.get(dateStr);
-                            const off = isSunday || !!dbHoliday;
-                            return (
-                                <tr key={dateStr} className={off ? 'print-row-off' : ''}>
-                                    <td>{format(day, 'd MMMM', { locale: tr })}</td>
-                                    <td>{format(day, 'EEEE', { locale: tr })}</td>
-                                    <td>{dbHoliday ? (dbHoliday.name || 'Tatil') : isSunday ? '—' : (chore?.name || '—')}</td>
-                                    <td>{off ? '' : (viledaAssignment?.name || '—')}</td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
+                <div className="calendar-print-weekdays">
+                    {weekDays.map((d) => (
+                        <div key={d} className="calendar-print-weekday">{d}</div>
+                    ))}
+                </div>
+                <div className="calendar-print-grid">
+                    {days.map((day) => {
+                        const dateStr = format(day, 'yyyy-MM-dd');
+                        const isCurrentMonth = isSameMonth(day, currentMonth);
+                        const isSunday = day.getDay() === 0;
+                        const dbHoliday = holidayMap.get(dateStr);
+                        const chore = choreMap.get(dateStr);
+                        const viledaAssignment = viledaMap.get(dateStr);
+                        const off = isSunday || !!dbHoliday;
+
+                        let cls = 'calendar-print-cell';
+                        if (!isCurrentMonth) cls += ' print-cell-muted';
+                        else if (off) cls += ' print-cell-off';
+
+                        return (
+                            <div key={dateStr} className={cls}>
+                                <span className="print-cell-num">{format(day, 'd')}</span>
+                                {isCurrentMonth && (
+                                    dbHoliday ? (
+                                        <span className="print-cell-holiday">{dbHoliday.name || 'Tatil'}</span>
+                                    ) : !isSunday ? (
+                                        <>
+                                            {chore && <span className="print-cell-chore">{chore.name}</span>}
+                                            {viledaAssignment && (
+                                                <span className="print-cell-vileda">Vileda: {viledaAssignment.name}</span>
+                                            )}
+                                        </>
+                                    ) : null
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
             {/* Deletion Type Selection Modal */}
