@@ -1648,4 +1648,21 @@ svg {
     break-inside: avoid;
     page-break-inside: avoid;
   }
+
+  /* Force names to print legibly: override the per-member inline color
+     (light colors print near-invisible) and stop nowrap/ellipsis clipping */
+  .calendar-day-name,
+  .calendar-vileda-label,
+  .calendar-holiday-label {
+    color: #111827 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+  }
+
+  /* Give cells room so wrapped names aren't cramped */
+  .calendar-day {
+    min-height: 70px !important;
+  }
 }
