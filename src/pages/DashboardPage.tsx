@@ -1,24 +1,3 @@
-    // Bugün için test bildirimi gönder
-    const sendTestNotification = async () => {
-        try {
-            // Project ID'yi .env'den otomatik al
-            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-            const projectId = supabaseUrl?.split('//')[1]?.split('.')[0];
-            const functionUrl = `https://${projectId}.functions.supabase.co/telegram-bot`;
-            const res = await fetch(functionUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'test' })
-            });
-            if (res.ok) {
-                alert('Test bildirimi gönderildi!');
-            } else {
-                alert('Test bildirimi gönderilemedi.');
-            }
-        } catch (err) {
-            alert('Test bildirimi gönderilemedi.');
-        }
-    };
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { format, endOfMonth } from 'date-fns';
@@ -28,7 +7,7 @@ import TodayHero from '../components/TodayHero';
 import Calendar from '../components/Calendar';
 import MemberAvatar from '../components/MemberAvatar';
 import { useAuth } from '../context/AuthContext';
-import { StatsIcon, SendIcon } from '../components/icons';
+import { StatsIcon } from '../components/icons';
 
 export default function DashboardPage() {
     const [todayData, setTodayData] = useState<TodayResponse>({ chore: null, vileda: null });
@@ -171,11 +150,6 @@ export default function DashboardPage() {
                     onToggleHoliday={isAdmin ? handleToggleHoliday : undefined}
                     onMonthChange={setCurrentMonth}
                 />
-                {isAdmin && (
-                    <button className="no-print btn-icon" style={{marginTop: 16, padding: '8px 16px', background: '#10B981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer'}} onClick={sendTestNotification}>
-                        <SendIcon size={16} weight="bold" /> Bugün için test bildirimi gönder
-                    </button>
-                )}
             </div>
 
             <aside className="dashboard-sidebar">
