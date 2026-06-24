@@ -359,6 +359,41 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                 </motion.div>
             </AnimatePresence>
 
+            {/* Print-only view: clean month table (screen-hidden, shown on print) */}
+            <div className="calendar-print-view">
+                <h2 className="calendar-print-title">
+                    {format(currentMonth, 'MMMM yyyy', { locale: tr })} — Görev Takvimi
+                </h2>
+                <table className="calendar-print-table">
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Gün</th>
+                            <th>Temizlik</th>
+                            <th>Vileda</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {eachDayOfInterval({ start: monthStart, end: monthEnd }).map((day) => {
+                            const dateStr = format(day, 'yyyy-MM-dd');
+                            const isSunday = day.getDay() === 0;
+                            const dbHoliday = holidayMap.get(dateStr);
+                            const chore = choreMap.get(dateStr);
+                            const viledaAssignment = viledaMap.get(dateStr);
+                            const off = isSunday || !!dbHoliday;
+                            return (
+                                <tr key={dateStr} className={off ? 'print-row-off' : ''}>
+                                    <td>{format(day, 'd MMMM', { locale: tr })}</td>
+                                    <td>{format(day, 'EEEE', { locale: tr })}</td>
+                                    <td>{dbHoliday ? (dbHoliday.name || 'Tatil') : isSunday ? '—' : (chore?.name || '—')}</td>
+                                    <td>{off ? '' : (viledaAssignment?.name || '—')}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+
             {/* Deletion Type Selection Modal */}
             <AnimatePresence>
                 {deletionSelectDate && (

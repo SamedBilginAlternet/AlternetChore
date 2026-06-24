@@ -1598,35 +1598,41 @@ svg {
 }
 
 /* Print: show only a clean month grid */
+/* Dedicated print layout: a clean month table instead of the interactive grid.
+   Hidden on screen, revealed only when printing. */
+.calendar-print-view {
+  display: none;
+}
+
 @media print {
   @page {
-    size: landscape;
-    margin: 12mm;
+    size: portrait;
+    margin: 14mm;
   }
 
   body {
     background: #fff !important;
+    color: #111827 !important;
   }
 
-  /* Force background / member colors to render in print */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* Hide everything that isn't the calendar */
+  /* Hide the whole app chrome AND the interactive calendar */
   .navbar,
   .dashboard-sidebar,
   .no-print,
-  .calendar-nav-btn,
-  .calendar-holiday-toggle,
-  .calendar-unassign-btn,
+  .calendar-toolbar,
+  .calendar-header,
+  .calendar-weekdays,
+  .calendar-grid,
   .assign-modal,
   .assign-modal-overlay {
     display: none !important;
   }
 
-  /* Let the calendar fill the page */
   .dashboard-container {
     display: block !important;
   }
@@ -1641,28 +1647,55 @@ svg {
     border: none !important;
     margin: 0 !important;
     padding: 0 !important;
+    background: transparent !important;
   }
 
-  /* Keep day cells whole across page breaks */
-  .calendar-day {
+  /* Reveal the print table */
+  .calendar-print-view {
+    display: block !important;
+  }
+
+  .calendar-print-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 14px;
+    text-transform: capitalize;
+  }
+
+  .calendar-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .calendar-print-table th,
+  .calendar-print-table td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 10px;
+    text-align: left;
+    color: #111827;
+  }
+
+  .calendar-print-table th {
+    background: #e2e8f0 !important;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .calendar-print-table td:nth-child(3),
+  .calendar-print-table td:nth-child(4) {
+    font-weight: 600;
+  }
+
+  .calendar-print-table tr.print-row-off td {
+    color: #94a3b8;
+    background: #f8fafc !important;
+  }
+
+  .calendar-print-table tr {
     break-inside: avoid;
     page-break-inside: avoid;
-  }
-
-  /* Force names to print legibly: override the per-member inline color
-     (light colors print near-invisible) and stop nowrap/ellipsis clipping */
-  .calendar-day-name,
-  .calendar-vileda-label,
-  .calendar-holiday-label {
-    color: #111827 !important;
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    max-width: none !important;
-  }
-
-  /* Give cells room so wrapped names aren't cramped */
-  .calendar-day {
-    min-height: 70px !important;
   }
 }
