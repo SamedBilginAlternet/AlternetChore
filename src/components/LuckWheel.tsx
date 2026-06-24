@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Member } from '../lib/api';
+import { WheelIcon, ChoreIcon, ViledaIcon, SpinnerIcon, PartyIcon } from './icons';
 
 interface LuckWheelProps {
     members: Member[];
@@ -65,7 +66,7 @@ export default function LuckWheel({ members, mode, onResult }: LuckWheelProps) {
     if (members.length === 0) {
         return (
             <div className="empty-state">
-                <div className="empty-state-icon">🎡</div>
+                <div className="empty-state-icon"><WheelIcon size={48} weight="duotone" /></div>
                 <h3>Üye Bulunamadı</h3>
                 <p>Çarkı döndürmek için önce üye ekleyin.</p>
             </div>
@@ -120,7 +121,7 @@ export default function LuckWheel({ members, mode, onResult }: LuckWheelProps) {
 
             <div className="wheel-container">
                 {/* Pointer */}
-                <div className="wheel-pointer">▼</div>
+                <div className="wheel-pointer" />
 
                 {/* Wheel SVG */}
                 <motion.svg
@@ -171,7 +172,7 @@ export default function LuckWheel({ members, mode, onResult }: LuckWheelProps) {
                                     fill={getContrastColor(member.color)}
                                     fontSize="12"
                                     fontWeight="900"
-                                    fontFamily="Inter, sans-serif"
+                                    fontFamily="'Plus Jakarta Sans', sans-serif"
                                     transform={`rotate(${textRotation}, ${textX}, ${textY})`}
                                 >
                                     {member.name.charAt(0).toUpperCase()} {member.name}
@@ -181,16 +182,8 @@ export default function LuckWheel({ members, mode, onResult }: LuckWheelProps) {
                     })}
 
                     {/* Center circle */}
-                    <circle cx={center} cy={center} r="24" fill="white" stroke="#D1D5DB" strokeWidth="2" />
-                    <text
-                        x={center}
-                        y={center}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize="16"
-                    >
-                        {mode === 'vileda' ? '🧽' : '🧹'}
-                    </text>
+                    <circle cx={center} cy={center} r="26" fill="white" stroke="#D1D5DB" strokeWidth="2" />
+                    <circle cx={center} cy={center} r="9" fill="var(--primary)" />
                 </motion.svg>
             </div>
 
@@ -212,7 +205,13 @@ export default function LuckWheel({ members, mode, onResult }: LuckWheelProps) {
                         : undefined
                 }
             >
-                {spinning ? '🎡 Dönüyor...' : mode === 'vileda' ? '🧽 Vileda Çarkını Çevir!' : '🧹 Görev Çarkını Çevir!'}
+                {spinning ? (
+                    <span className="inline-icon-text"><SpinnerIcon size={18} weight="bold" className="spin" /> Dönüyor...</span>
+                ) : mode === 'vileda' ? (
+                    <span className="inline-icon-text"><ViledaIcon size={18} weight="bold" /> Vileda Çarkını Çevir!</span>
+                ) : (
+                    <span className="inline-icon-text"><ChoreIcon size={18} weight="bold" /> Görev Çarkını Çevir!</span>
+                )}
             </motion.button>
 
             {/* Result */}
@@ -245,8 +244,10 @@ export default function LuckWheel({ members, mode, onResult }: LuckWheelProps) {
                             {winner.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="wheel-result-name">{winner.name}</div>
-                        <div className="wheel-result-label">
-                            {mode === 'vileda' ? '🧽 Vileda Görevi Seninmiş!' : '🧹 Bugünün Görevlisi!'} 🎉
+                        <div className="wheel-result-label inline-icon-text">
+                            {mode === 'vileda' ? <ViledaIcon size={18} weight="fill" /> : <ChoreIcon size={18} weight="fill" />}
+                            {mode === 'vileda' ? ' Vileda Görevi Seninmiş!' : ' Bugünün Görevlisi!'}
+                            <PartyIcon size={18} weight="fill" />
                         </div>
                     </motion.div>
                 )}

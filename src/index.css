@@ -3,7 +3,7 @@
    Premium White-Blue Palette v2
    ======================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* Colors */
@@ -36,7 +36,8 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 * {
@@ -59,6 +60,22 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+h1, h2, h3, h4,
+.calendar-month-title,
+.navbar-logo-text,
+.card-title,
+.hero-title {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+
+/* Crisper icon alignment app-wide */
+svg {
+  flex-shrink: 0;
+  vertical-align: middle;
 }
 
 /* ========================================
@@ -895,11 +912,15 @@ body {
 
 .wheel-pointer {
   position: absolute;
-  top: -16px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  font-size: 32px;
+  width: 0;
+  height: 0;
+  border-left: 13px solid transparent;
+  border-right: 13px solid transparent;
+  border-top: 22px solid var(--primary);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
@@ -1040,6 +1061,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 24px;
+  color: white;
   margin: 0 auto 14px;
   box-shadow: var(--shadow-blue);
 }
@@ -1470,6 +1492,7 @@ body {
 .empty-state-icon {
   font-size: 44px;
   margin-bottom: 12px;
+  color: var(--accent);
 }
 
 .empty-state h3 {
@@ -1518,6 +1541,34 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.5);
+}
+
+/* Icon + text alignment helpers (Phosphor icons) */
+.inline-icon-text,
+.btn-icon,
+.navbar-link-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  line-height: 1;
+}
+
+.btn-icon {
+  justify-content: center;
+}
+
+/* Buttons that contain an icon span keep icon + label centered */
+.btn > .inline-icon-text {
+  justify-content: center;
+}
+
+/* Continuous spin for loading icons */
+@keyframes icon-spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: icon-spin 0.9s linear infinite;
 }
 
 /* Calendar print toolbar */

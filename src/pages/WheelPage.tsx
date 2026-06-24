@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Member } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import LuckWheel from '../components/LuckWheel';
+import { WheelIcon, ChoreIcon, ViledaIcon, SpinnerIcon, CheckIcon, ErrorIcon } from '../components/icons';
 
 type WheelMode = 'chore' | 'vileda';
 
@@ -75,7 +76,7 @@ export default function WheelPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
             >
-                🎡 Şans Çarkı
+                <WheelIcon size={32} weight="duotone" /> Şans Çarkı
             </motion.h1>
             <motion.p
                 className="wheel-subtitle"
@@ -97,13 +98,13 @@ export default function WheelPage() {
                     className={`wheel-mode-btn ${mode === 'chore' ? 'active' : ''}`}
                     onClick={() => setMode('chore')}
                 >
-                    🧹 Günlük Görev
+                    <ChoreIcon size={18} weight="bold" /> Günlük Görev
                 </button>
                 <button
                     className={`wheel-mode-btn ${mode === 'vileda' ? 'active' : ''}`}
                     onClick={() => setMode('vileda')}
                 >
-                    🧽 Vileda Günü
+                    <ViledaIcon size={18} weight="bold" /> Vileda Günü
                 </button>
             </motion.div>
 
@@ -119,14 +120,14 @@ export default function WheelPage() {
                         exit={{ opacity: 0, y: -10 }}
                     >
                         {saving ? (
-                            <span className="wheel-save-saving">⏳ Kaydediliyor...</span>
+                            <span className="wheel-save-saving inline-icon-text"><SpinnerIcon size={16} weight="bold" className="spin" /> Kaydediliyor...</span>
                         ) : saveResult?.success ? (
-                            <span className="wheel-save-success">
-                                ✅ {saveResult.name} için {mode === 'vileda' ? 'vileda' : 'görev'} ataması kaydedildi!
+                            <span className="wheel-save-success inline-icon-text">
+                                <CheckIcon size={16} weight="fill" /> {saveResult.name} için {mode === 'vileda' ? 'vileda' : 'görev'} ataması kaydedildi!
                             </span>
                         ) : (
-                            <span className="wheel-save-error">
-                                ❌ Kayıt başarısız. Tekrar deneyin.
+                            <span className="wheel-save-error inline-icon-text">
+                                <ErrorIcon size={16} weight="fill" /> Kayıt başarısız. Tekrar deneyin.
                             </span>
                         )}
                     </motion.div>

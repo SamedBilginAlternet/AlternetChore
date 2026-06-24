@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { LockIcon, SignInIcon, SpinnerIcon } from '../components/icons';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -59,7 +60,7 @@ export default function LoginPage() {
                         animate={{ scale: 1, rotate: 0 }}
                         transition={{ delay: 0.2, type: 'spring', stiffness: 200, damping: 12 }}
                     >
-                        🔐
+                        <LockIcon size={36} weight="duotone" />
                     </motion.div>
                     <motion.h1
                         initial={{ opacity: 0, y: 10 }}
@@ -137,7 +138,9 @@ export default function LoginPage() {
                         whileTap={{ scale: 0.98 }}
                         style={{ width: '100%' }}
                     >
-                        {loading ? '⏳ Giriş yapılıyor...' : '🚀 Giriş Yap'}
+                        {loading
+                            ? <span className="inline-icon-text"><SpinnerIcon size={18} weight="bold" className="spin" /> Giriş yapılıyor...</span>
+                            : <span className="inline-icon-text"><SignInIcon size={18} weight="bold" /> Giriş Yap</span>}
                     </motion.button>
                 </form>
             </motion.div>

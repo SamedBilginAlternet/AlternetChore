@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Assignment } from '../lib/api';
 import MemberAvatar from './MemberAvatar';
+import { ChoreIcon, PartyIcon } from './icons';
 
 interface TodayHeroProps {
     chore: Assignment | null;
@@ -42,7 +43,7 @@ export default function TodayHero({ chore, vileda, loading }: TodayHeroProps) {
                         {chore ? (
                             <MemberAvatar name={chore.name} color={chore.color} size={84} />
                         ) : (
-                            <div className="avatar-placeholder hero-placeholder">🎉</div>
+                            <div className="avatar-placeholder hero-placeholder"><PartyIcon size={44} weight="fill" /></div>
                         )}
                     </motion.div>
                     <div className="today-hero-info">
@@ -51,7 +52,7 @@ export default function TodayHero({ chore, vileda, loading }: TodayHeroProps) {
                             animate={{ opacity: 0.9, y: 0 }}
                             transition={{ delay: 0.4 }}
                         >
-                            {isWeekend ? 'Günün Durumu' : '🧹 Bugün Sıra Sende!'}
+                            {isWeekend ? 'Günün Durumu' : <span className="inline-icon-text"><ChoreIcon size={18} weight="fill" /> Bugün Sıra Sende!</span>}
                         </motion.h2>
                         <motion.h1
                             initial={{ opacity: 0, y: 10 }}

@@ -28,6 +28,7 @@ import TodayHero from '../components/TodayHero';
 import Calendar from '../components/Calendar';
 import MemberAvatar from '../components/MemberAvatar';
 import { useAuth } from '../context/AuthContext';
+import { StatsIcon, SendIcon } from '../components/icons';
 
 export default function DashboardPage() {
     const [todayData, setTodayData] = useState<TodayResponse>({ chore: null, vileda: null });
@@ -171,8 +172,8 @@ export default function DashboardPage() {
                     onMonthChange={setCurrentMonth}
                 />
                 {isAdmin && (
-                    <button className="no-print" style={{marginTop: 16, padding: '8px 16px', background: '#10B981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer'}} onClick={sendTestNotification}>
-                        Bugün için test bildirimi gönder
+                    <button className="no-print btn-icon" style={{marginTop: 16, padding: '8px 16px', background: '#10B981', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer'}} onClick={sendTestNotification}>
+                        <SendIcon size={16} weight="bold" /> Bugün için test bildirimi gönder
                     </button>
                 )}
             </div>
@@ -192,7 +193,7 @@ export default function DashboardPage() {
                         transition={{ delay: 0.2 }}
                     >
                         <div className="card-header">
-                            <h3 className="card-title">📊 Görev Dağılımı</h3>
+                            <h3 className="card-title"><StatsIcon size={20} weight="duotone" /> Görev Dağılımı</h3>
                         </div>
                         <div className="card-body stats-body">
                             {stats.map((stat, i) => (

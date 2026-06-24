@@ -16,6 +16,7 @@ import { tr } from 'date-fns/locale';
 import { Assignment, Member, Holiday } from '../lib/api';
 import MemberAvatar from './MemberAvatar';
 import { useAuth } from '../context/AuthContext';
+import { PrintIcon, HolidayIcon, ViledaIcon, ChoreIcon, CloseIcon, PrevIcon, NextIcon } from './icons';
 
 interface CalendarProps {
     assignments: Assignment[];
@@ -117,12 +118,12 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
         <div className="card calendar-container">
             <div className="calendar-toolbar no-print">
                 <button className="calendar-print-btn" onClick={handlePrint} title="Takvimi yazdır">
-                    🖨️ Yazdır
+                    <PrintIcon size={16} weight="bold" /> Yazdır
                 </button>
             </div>
             <div className="calendar-header">
                 <button className="calendar-nav-btn" onClick={goPrev} aria-label="Önceki ay">
-                    ‹
+                    <PrevIcon size={22} weight="bold" />
                 </button>
                 <AnimatePresence mode="wait" custom={direction}>
                     <motion.h2
@@ -138,7 +139,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                     </motion.h2>
                 </AnimatePresence>
                 <button className="calendar-nav-btn" onClick={goNext} aria-label="Sonraki ay">
-                    ›
+                    <NextIcon size={22} weight="bold" />
                 </button>
             </div>
 
@@ -201,10 +202,10 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                 <div className="calendar-day-top">
                                     <span className="calendar-day-number">{format(day, 'd')}</span>
                                     {holiday && isCurrentMonth && (
-                                        <span className="calendar-holiday-dot" title={dbHoliday?.name || 'Tatil'}>🔴</span>
+                                        <span className="calendar-holiday-dot" title={dbHoliday?.name || 'Tatil'}><HolidayIcon size={14} weight="fill" /></span>
                                     )}
                                     {viledaAssignment && isCurrentMonth && !isSunday && !dbHoliday && (
-                                        <span className="calendar-vileda-dot" title={`Vileda: ${viledaAssignment.name}`}>🧽</span>
+                                        <span className="calendar-vileda-dot" title={`Vileda: ${viledaAssignment.name}`}><ViledaIcon size={14} weight="fill" /></span>
                                     )}
                                 </div>
                                 {holiday && isCurrentMonth ? (
@@ -237,7 +238,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                         title={holiday ? 'Tatili kaldır' : 'Tatil yap'}
                                         onClick={(e) => { e.stopPropagation(); onToggleHoliday(dateStr); }}
                                     >
-                                        {holiday ? '✖' : '🏖️'}
+                                        {holiday ? <CloseIcon size={13} weight="bold" /> : <HolidayIcon size={13} weight="bold" />}
                                     </button>
                                 )}
                                 {/* Admin: unassign buttons */}
@@ -257,7 +258,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                             fontSize: '12px',
                                         }}
                                     >
-                                        ✖
+                                        <CloseIcon size={12} weight="bold" />
                                     </button>
                                 )}
                                 {selectedDay === dateStr && isAdmin && onAssign && !holiday && (
@@ -310,7 +311,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                                     onClick={() => setSelectedDay(null)}
                                                     title="Kapat"
                                                 >
-                                                    ×
+                                                    <CloseIcon size={18} weight="bold" />
                                                 </button>
                                             </div>
                                             <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
@@ -320,14 +321,14 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                                     style={{ background: assignType === 'chore' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'chore' ? 700 : 400 }}
                                                     onClick={(e) => { e.stopPropagation(); setAssignType('chore'); }}
                                                 >
-                                                    🧹 Temizlik
+                                                    <ChoreIcon size={15} weight="bold" /> Temizlik
                                                 </button>
                                                 <button
                                                     className="assign-type-btn"
                                                     style={{ background: assignType === 'vileda' ? '#e0f2fe' : '#f3f4f6', borderRadius: 4, padding: '2px 8px', border: 'none', cursor: 'pointer', fontWeight: assignType === 'vileda' ? 700 : 400 }}
                                                     onClick={(e) => { e.stopPropagation(); setAssignType('vileda'); }}
                                                 >
-                                                    🧽 Vileda
+                                                    <ViledaIcon size={15} weight="bold" /> Vileda
                                                 </button>
                                             </div>
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -422,7 +423,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                                         fontSize: 14
                                                     }}
                                                 >
-                                                    🧹 Temizlik Atamasını Sil
+                                                    <ChoreIcon size={15} weight="bold" /> Temizlik Atamasını Sil
                                                 </button>
                                             )}
                                             {viledaAssignment && (
@@ -444,7 +445,7 @@ export default function Calendar({ assignments, members, holidays, onAssign, onU
                                                         fontSize: 14
                                                     }}
                                                 >
-                                                    🧽 Vileda Atamasını Sil
+                                                    <ViledaIcon size={15} weight="bold" /> Vileda Atamasını Sil
                                                 </button>
                                             )}
                                         </>

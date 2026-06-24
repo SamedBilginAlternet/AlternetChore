@@ -6,6 +6,11 @@ import { Member, MemberStats } from '../lib/api';
 import { supabase } from '../lib/supabase';
 import MemberAvatar from '../components/MemberAvatar';
 import { useAuth } from '../context/AuthContext';
+import {
+    MembersIcon, CalendarIcon, TelegramIcon, SyncIcon, CloseIcon, CheckIcon,
+    TrashIcon, ChoreIcon, ViledaIcon, StatsIcon, SendIcon, TestIcon,
+    SpinnerIcon, PlusIcon, PauseIcon, PlayIcon,
+} from '../components/icons';
 
 type Tab = 'members' | 'schedule' | 'telegram';
 
@@ -212,7 +217,7 @@ export default function AdminPanel() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
             >
-                ⚙️ Yönetim Paneli
+                Yönetim Paneli
             </motion.h1>
             <motion.p
                 initial={{ opacity: 0, y: -10 }}
@@ -230,9 +235,11 @@ export default function AdminPanel() {
                         className={`admin-tab ${tab === t ? 'active' : ''}`}
                         onClick={() => setTab(t)}
                     >
-                        {t === 'members' && '👥 Üyeler'}
-                        {t === 'schedule' && '📅 Takvim'}
-                        {t === 'telegram' && '📱 Telegram'}
+                        <span className="inline-icon-text">
+                            {t === 'members' && <><MembersIcon size={17} weight="bold" /> Üyeler</>}
+                            {t === 'schedule' && <><CalendarIcon size={17} weight="bold" /> Takvim</>}
+                            {t === 'telegram' && <><TelegramIcon size={17} weight="bold" /> Telegram</>}
+                        </span>
                     </button>
                 ))}
             </div>
@@ -255,13 +262,17 @@ export default function AdminPanel() {
                                     onClick={syncFromTelegram}
                                     disabled={syncing}
                                 >
-                                    {syncing ? '⏳ Senkronize...' : '🔄 Telegram Sync'}
+                                    {syncing
+                                        ? <span className="inline-icon-text"><SpinnerIcon size={15} weight="bold" className="spin" /> Senkronize...</span>
+                                        : <span className="inline-icon-text"><SyncIcon size={15} weight="bold" /> Telegram Sync</span>}
                                 </button>
                                 <button
                                     className="btn btn-primary btn-sm"
                                     onClick={() => setShowAddForm(!showAddForm)}
                                 >
-                                    {showAddForm ? '✕ İptal' : '+ Üye Ekle'}
+                                    {showAddForm
+                                        ? <span className="inline-icon-text"><CloseIcon size={15} weight="bold" /> İptal</span>
+                                        : <span className="inline-icon-text"><PlusIcon size={15} weight="bold" /> Üye Ekle</span>}
                                 </button>
                             </div>
                         </div>
@@ -321,8 +332,8 @@ export default function AdminPanel() {
                                         </div>
                                     </div>
                                     {/* Emoji section removed as per request */}
-                                    <button type="submit" className="btn btn-primary">
-                                        ✓ Üye Ekle
+                                    <button type="submit" className="btn btn-primary btn-icon">
+                                        <CheckIcon size={16} weight="bold" /> Üye Ekle
                                     </button>
                                 </motion.form>
                             )}
@@ -357,14 +368,14 @@ export default function AdminPanel() {
                                             onClick={() => toggleMember(member)}
                                             title={member.active ? 'Pasifleştir' : 'Aktifleştir'}
                                         >
-                                            {member.active ? '⏸️' : '▶️'}
+                                            {member.active ? <PauseIcon size={16} weight="bold" /> : <PlayIcon size={16} weight="bold" />}
                                         </button>
                                         <button
                                             className="btn btn-ghost btn-sm"
                                             onClick={() => removeMember(member.id)}
                                             title="Sil"
                                         >
-                                            🗑️
+                                            <TrashIcon size={16} weight="bold" />
                                         </button>
                                     </div>
                                 </motion.div>
@@ -403,7 +414,9 @@ export default function AdminPanel() {
                                     onClick={generateSchedule}
                                     disabled={generating}
                                 >
-                                    {generating ? '⏳ Oluşturuluyor...' : '🎲 Takvim Oluştur'}
+                                    {generating
+                                        ? <span className="inline-icon-text"><SpinnerIcon size={16} weight="bold" className="spin" /> Oluşturuluyor...</span>
+                                        : <span className="inline-icon-text"><CalendarIcon size={16} weight="bold" /> Takvim Oluştur</span>}
                                 </button>
                             </div>
 
@@ -414,7 +427,7 @@ export default function AdminPanel() {
                                     animate={{ opacity: 1, y: 0 }}
                                 >
                                     <div className="card-header">
-                                        <h3 className="card-title">✅ Takvim Oluşturuldu!</h3>
+                                        <h3 className="card-title inline-icon-text"><CheckIcon size={20} weight="fill" /> Takvim Oluşturuldu!</h3>
                                         <span style={{ color: '#6B7280', fontSize: 13 }}>
                                             {scheduleResult.chores.length} görev + {scheduleResult.vileda.length} vileda günü atandı
                                         </span>
@@ -424,8 +437,8 @@ export default function AdminPanel() {
                                             <thead>
                                                 <tr>
                                                     <th>Tarih</th>
-                                                    <th>🧹 Görevli</th>
-                                                    <th>🧽 Vileda</th>
+                                                    <th><span className="inline-icon-text"><ChoreIcon size={15} weight="bold" /> Görevli</span></th>
+                                                    <th><span className="inline-icon-text"><ViledaIcon size={15} weight="bold" /> Vileda</span></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -468,15 +481,15 @@ export default function AdminPanel() {
                                     transition={{ delay: 0.1 }}
                                 >
                                     <div className="card-header">
-                                        <h3 className="card-title">📊 Toplam Dağılım</h3>
+                                        <h3 className="card-title inline-icon-text"><StatsIcon size={20} weight="duotone" /> Toplam Dağılım</h3>
                                     </div>
                                     <div className="card-body" style={{ padding: 0 }}>
                                         <table className="stats-table">
                                             <thead>
                                                 <tr>
                                                     <th>Üye</th>
-                                                    <th>🧹 Görev</th>
-                                                    <th>🧽 Vileda</th>
+                                                    <th><span className="inline-icon-text"><ChoreIcon size={15} weight="bold" /> Görev</span></th>
+                                                    <th><span className="inline-icon-text"><ViledaIcon size={15} weight="bold" /> Vileda</span></th>
                                                     <th>Oran</th>
                                                 </tr>
                                             </thead>
@@ -524,7 +537,7 @@ export default function AdminPanel() {
                     >
                         <div className="card">
                             <div className="card-header">
-                                <h3 className="card-title">📱 Telegram Bot Ayarları</h3>
+                                <h3 className="card-title inline-icon-text"><TelegramIcon size={20} weight="fill" /> Telegram Bot Ayarları</h3>
                             </div>
                             <div className="card-body" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                                 <div style={{
@@ -565,7 +578,9 @@ export default function AdminPanel() {
                                     onClick={testTelegram}
                                     disabled={testingTelegram}
                                 >
-                                    {testingTelegram ? '⏳ Test ediliyor...' : '🧪 Test Bildirimi Gönder'}
+                                    {testingTelegram
+                                        ? <span className="inline-icon-text"><SpinnerIcon size={16} weight="bold" className="spin" /> Test ediliyor...</span>
+                                        : <span className="inline-icon-text"><TestIcon size={16} weight="bold" /> Test Bildirimi Gönder</span>}
                                 </button>
 
                                 {telegramResult && (
@@ -582,8 +597,8 @@ export default function AdminPanel() {
                                         }}
                                     >
                                         {telegramResult === 'success'
-                                            ? '✅ Test bildirimi başarıyla gönderildi!'
-                                            : '❌ Bildirim gönderilemedi. Bot token ve chat ID ayarlarını kontrol edin.'}
+                                            ? <span className="inline-icon-text"><CheckIcon size={16} weight="fill" /> Test bildirimi başarıyla gönderildi!</span>
+                                            : <span className="inline-icon-text"><CloseIcon size={16} weight="bold" /> Bildirim gönderilemedi. Bot token ve chat ID ayarlarını kontrol edin.</span>}
                                     </motion.div>
                                 )}
 
@@ -592,7 +607,9 @@ export default function AdminPanel() {
                                     onClick={sendDailyNotification}
                                     disabled={sendingDaily}
                                 >
-                                    {sendingDaily ? '⏳ Gönderiliyor...' : '📨 Günlük Bildirimi Şimdi Gönder'}
+                                    {sendingDaily
+                                        ? <span className="inline-icon-text"><SpinnerIcon size={16} weight="bold" className="spin" /> Gönderiliyor...</span>
+                                        : <span className="inline-icon-text"><SendIcon size={16} weight="bold" /> Günlük Bildirimi Şimdi Gönder</span>}
                                 </button>
 
                                 {dailyResult && (
@@ -609,8 +626,8 @@ export default function AdminPanel() {
                                         }}
                                     >
                                         {dailyResult === 'success'
-                                            ? '✅ Günlük bildirim gönderildi (bugün görev yoksa mesaj atılmaz).'
-                                            : '❌ Bildirim gönderilemedi. Bot token ve chat ID ayarlarını kontrol edin.'}
+                                            ? <span className="inline-icon-text"><CheckIcon size={16} weight="fill" /> Günlük bildirim gönderildi (bugün görev yoksa mesaj atılmaz).</span>
+                                            : <span className="inline-icon-text"><CloseIcon size={16} weight="bold" /> Bildirim gönderilemedi. Bot token ve chat ID ayarlarını kontrol edin.</span>}
                                     </motion.div>
                                 )}
                             </div>
