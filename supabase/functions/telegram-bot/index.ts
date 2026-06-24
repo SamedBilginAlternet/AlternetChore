@@ -153,9 +153,9 @@ serve(async (req: Request) => {
                 .eq('date', today);
 
             if (!assignments || assignments.length === 0) {
-                return new Response("No assignments for today", {
+                return new Response(JSON.stringify({ success: true, message: "No assignments for today" }), {
                     status: 200,
-                    headers: { ...corsHeaders }
+                    headers: { ...corsHeaders, "Content-Type": "application/json" }
                 });
             }
 
@@ -178,9 +178,10 @@ serve(async (req: Request) => {
             }
 
             const res = await sendTelegramMessage(TELEGRAM_CHAT_ID!, text, undefined);
-            return new Response("Notification sent", {
-                status: 200,
-                headers: { ...corsHeaders }
+            if (!res.ok) console.error(`Telegram send failed: ${JSON.stringify(res)}`);
+            return new Response(JSON.stringify({ success: res.ok, result: res }), {
+                status: res.ok ? 200 : 500,
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
             });
         }
 

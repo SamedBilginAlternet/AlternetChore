@@ -32,6 +32,8 @@ export default function AdminPanel() {
     // Telegram state
     const [testingTelegram, setTestingTelegram] = useState(false);
     const [telegramResult, setTelegramResult] = useState<string | null>(null);
+    const [sendingDaily, setSendingDaily] = useState(false);
+    const [dailyResult, setDailyResult] = useState<string | null>(null);
     const [syncing, setSyncing] = useState(false);
     const [syncResult, setSyncResult] = useState<string | null>(null);
 
@@ -146,6 +148,21 @@ export default function AdminPanel() {
             setTelegramResult('error');
         } finally {
             setTestingTelegram(false);
+        }
+    };
+
+    const sendDailyNotification = async () => {
+        setSendingDaily(true);
+        setDailyResult(null);
+        try {
+            const { data, error } = await supabase.functions.invoke('telegram-bot', {
+                body: { action: 'daily-notification' }
+            });
+            setDailyResult(!error && data?.success ? 'success' : 'error');
+        } catch {
+            setDailyResult('error');
+        } finally {
+            setSendingDaily(false);
         }
     };
 
@@ -566,6 +583,33 @@ export default function AdminPanel() {
                                     >
                                         {telegramResult === 'success'
                                             ? '✅ Test bildirimi başarıyla gönderildi!'
+                                            : '❌ Bildirim gönderilemedi. Bot token ve chat ID ayarlarını kontrol edin.'}
+                                    </motion.div>
+                                )}
+
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={sendDailyNotification}
+                                    disabled={sendingDaily}
+                                >
+                                    {sendingDaily ? '⏳ Gönderiliyor...' : '📨 Günlük Bildirimi Şimdi Gönder'}
+                                </button>
+
+                                {dailyResult && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        style={{
+                                            padding: 12,
+                                            borderRadius: 8,
+                                            fontSize: 14,
+                                            fontWeight: 500,
+                                            background: dailyResult === 'success' ? '#D1FAE5' : '#FEE2E2',
+                                            color: dailyResult === 'success' ? '#065F46' : '#991B1B',
+                                        }}
+                                    >
+                                        {dailyResult === 'success'
+                                            ? '✅ Günlük bildirim gönderildi (bugün görev yoksa mesaj atılmaz).'
                                             : '❌ Bildirim gönderilemedi. Bot token ve chat ID ayarlarını kontrol edin.'}
                                     </motion.div>
                                 )}
