@@ -72,6 +72,28 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Today's date in Europe/Istanbul (UTC+3) — avoids the UTC off-by-one around midnight
+function getTodayIstanbul(): string {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Istanbul' }).format(new Date());
+}
+
+// Builds the dated task message (Markdown) shown for cron, test and /who
+function buildTaskMessage(assignments: any[], today: string): string {
+    const chore = assignments.find((a: any) => a.type === 'chore');
+    const vileda = assignments.find((a: any) => a.type === 'vileda');
+    let text = `📅 *Bugünün Görevleri* (${today})\n\n`;
+    if (chore) {
+        const handle = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
+        text += `🧹 Bugün sıra ${handle} sende!\n`;
+    }
+    if (vileda) {
+        const handle = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
+        text += `🧽 Vileda görevi: ${handle}\n`;
+    }
+    if (!chore && !vileda) text += 'Bugün için görev ataması yok.';
+    return text;
+}
+
 serve(async (req: Request) => {
     // Handle CORS preflight
     if (req.method === 'OPTIONS') {
@@ -90,31 +112,17 @@ serve(async (req: Request) => {
         // Local manual trigger (Test/Sync)
         if (action === 'test') {
             console.log("Running manual test...");
-            const today = new Date().toISOString().split('T')[0];
+            const today = getTodayIstanbul();
             const { data: assignments } = await supabase
                 .from('assignments')
                 .select('*, members(name, telegram_handle)')
                 .eq('date', today);
 
-            let text = '';
-            const chore = assignments?.find((a: any) => a.type === 'chore');
-            const vileda = assignments?.find((a: any) => a.type === 'vileda');
-            if (chore && vileda) {
-                const handleChore = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
-                const handleVileda = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
-                text = `${handleChore} temizlik sırası sende, ${handleVileda} vileda sırası sende.`;
-            } else if (chore) {
-                const handleChore = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
-                text = `${handleChore} temizlik sende.`;
-            } else if (vileda) {
-                const handleVileda = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
-                text = `${handleVileda} vileda sende.`;
-            } else {
-                text = 'Bugün için görev ataması yok.';
-            }
-            const res = await sendTelegramMessage(TELEGRAM_CHAT_ID!, text);
+            const text = buildTaskMessage(assignments ?? [], today);
+            const res = await sendTelegramMessage(TELEGRAM_CHAT_ID!, text, "Markdown");
             console.log(`Telegram response: ${JSON.stringify(res)}`);
             return new Response(JSON.stringify({ success: res.ok, result: res }), {
+                status: res.ok ? 200 : 500,
                 headers: { ...corsHeaders, "Content-Type": "application/json" }
             });
         }
@@ -146,7 +154,7 @@ serve(async (req: Request) => {
         // Cron trigger for daily notification (should be scheduled at 09:00 and 17:00)
         if (action === 'daily-notification') {
             console.log("Running daily notification...");
-            const today = new Date().toISOString().split('T')[0];
+            const today = getTodayIstanbul();
             const { data: assignments } = await supabase
                 .from('assignments')
                 .select('*, members(name, telegram_handle)')
@@ -159,25 +167,8 @@ serve(async (req: Request) => {
                 });
             }
 
-            const chore = assignments.find((a: any) => a.type === 'chore');
-            const vileda = assignments.find((a: any) => a.type === 'vileda');
-
-            let text = '';
-            if (chore && vileda) {
-                const handleChore = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
-                const handleVileda = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
-                text = `${handleChore} temizlik sırası sende, ${handleVileda} vileda sırası sende.`;
-            } else if (chore) {
-                const handleChore = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
-                text = `${handleChore} temizlik sende.`;
-            } else if (vileda) {
-                const handleVileda = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
-                text = `${handleVileda} vileda sende.`;
-            } else {
-                text = 'Bugün için görev ataması yok.';
-            }
-
-            const res = await sendTelegramMessage(TELEGRAM_CHAT_ID!, text, undefined);
+            const text = buildTaskMessage(assignments, today);
+            const res = await sendTelegramMessage(TELEGRAM_CHAT_ID!, text, "Markdown");
             if (!res.ok) console.error(`Telegram send failed: ${JSON.stringify(res)}`);
             return new Response(JSON.stringify({ success: res.ok, result: res }), {
                 status: res.ok ? 200 : 500,
@@ -201,29 +192,14 @@ serve(async (req: Request) => {
             }
 
             if (text === "/who") {
-                const today = new Date().toISOString().split('T')[0];
+                const today = getTodayIstanbul();
                 const { data: assignments } = await supabase
                     .from('assignments')
                     .select('*, members(name, telegram_handle)')
                     .eq('date', today);
 
-                let responseText = '';
-                const chore = assignments?.find((a: any) => a.type === 'chore');
-                const vileda = assignments?.find((a: any) => a.type === 'vileda');
-                if (chore && vileda) {
-                    const handleChore = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
-                    const handleVileda = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
-                    responseText = `${handleChore} temizlik sırası sende, ${handleVileda} vileda sırası sende.`;
-                } else if (chore) {
-                    const handleChore = chore.members.telegram_handle ? `@${chore.members.telegram_handle}` : chore.members.name;
-                    responseText = `${handleChore} temizlik sende.`;
-                } else if (vileda) {
-                    const handleVileda = vileda.members.telegram_handle ? `@${vileda.members.telegram_handle}` : vileda.members.name;
-                    responseText = `${handleVileda} vileda sende.`;
-                } else {
-                    responseText = 'Bugün için görev ataması yok.';
-                }
-                await sendTelegramMessage(chatId, responseText);
+                const responseText = buildTaskMessage(assignments ?? [], today);
+                await sendTelegramMessage(chatId, responseText, "Markdown");
             }
         }
 
